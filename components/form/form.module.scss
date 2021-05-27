@@ -1,4 +1,4 @@
-@import "../styles/variables.scss";
+@import "../../styles/variables.scss";
 
 .form {
   width: 40%;
@@ -42,4 +42,12 @@
 .errorList {
   margin: 0;
   padding-inline-start: 30px;
+}
+
+.inputNumber {
+  border: 2px solid $sub-color;
+  background-color: transparent;
+  color: $main-color;
+  border-radius: 5px;
+  width: 100%;
 }
