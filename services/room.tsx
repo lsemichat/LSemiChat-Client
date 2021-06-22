@@ -8,20 +8,14 @@ export interface Room {
   description: string,
 }
 
-export interface Tag {
-  id: string,
-  newTags: 
-  tags: string,
-}
-
-export class UserService {
+export class RoomCreate {
   // REF: singleton pettern: https://typescript-jp.gitbook.io/deep-dive/main-1/singleton
-  private static _instance: UserService
-  static getInstance(): UserService {
-    if (!UserService._instance) {
-      UserService._instance = new UserService()
+  private static _instance: RoomCreate
+  static getInstance(): RoomCreate {
+    if (!RoomCreate._instance) {
+      RoomCreate._instance = new RoomCreate()
     }
-    return UserService._instance
+    return RoomCreate._instance
   }
 
   public async getSelf(): Promise<any> {

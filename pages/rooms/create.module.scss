@@ -1,0 +1,15 @@
+@import "../../styles/variables.scss";
+@import "../../styles/globals.scss";
+
+.inputText[name=tag]{
+  font-size: .9rem;
+  padding: 5px;
+  border: none;
+  border-bottom: 2px solid $sub-color;
+  background-color: transparent;
+  color: $main-danger;
+  width: 100%;
+  &:focus {
+    outline: none;
+  }
+}

@@ -3,23 +3,77 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRouter } from "next/dist/client/router";
 import { useState, ChangeEvent, MouseEvent } from "react";
 import { PrimaryButton } from "../../components/button";
-import { SecondaryButton } from "../../components/button";
 import { DangerButton } from "../../components/button";
 import { SlideButton } from "../../components/button";
-import { AddButton } from "../../components/buttonAdd";
 import { InputText, InputTextarea } from "../../components/form/formField";
 import Form from "../../components/form/form";
 import Layout from "../../components/layout/layout";
-import { UserService, Room } from "../../services/room";
+import { RoomCreate, Room } from "../../services/room";
 import { InputNumber } from '../../components/form/formNumber';
+import { toUnicode } from 'punycode';
 
-export default function RoomCreate() {
+import styles from './create.module.scss'
+
+
+/*これはいらないかも formTag.tsx にかいた*/
+interface Tag{
+  value: string,
+  id: number,
+  removed: boolean
+}
+
+export default function RoomCreateFoom() {
   const router = useRouter()
   const [formRoomName, setFormRoomName] = useState("")
+
+  /*tagtragtagtag*/ 
   const [formTag, setFormTag] = useState("")
+  //追加+
+  const [tags,setTags] = useState<Tag[]>([])
+  
   const [formNumber, setFormNumber] = useState("")
   const [formDescription, setFormDescription] = useState("")
   const [errorStack, setErrorStack] = useState([])
+
+  const handleonSubmit = (evt: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    evt.preventDefault()
+
+    if(!formTag) return
+
+    const newTag: Tag = {
+      value: formTag,
+      id: new Date().getTime(),
+      removed: false
+    }
+
+    setTags([newTag, ...tags])
+    setFormTag('')
+
+  }
+
+  const handleOnEdit = (id: number, value: string) => {
+    const newTags = tags.map((tag) => {
+      if (tag.id === id) {
+        tag.value = value;
+      }
+      return tag;
+    });
+
+    // tags ステートを更新
+    setTags(newTags);
+  }
+
+  const handleOnRemove = (id: number, removed: boolean) => {
+    const newTags = tags.map((tag) => {
+      if (tag.id === id) {
+        tag.removed = !removed;
+      }
+      return tag;
+    });
+
+    setTags(newTags);
+  };
+  /*tag end*/ 
 
   const handleSubmit = (evt: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     evt.preventDefault()
@@ -37,7 +91,7 @@ export default function RoomCreate() {
       description: formDescription
     }
     // ↓？
-    const res = UserService.getInstance().create(newRoom)
+    const res = RoomCreate.getInstance().create(newRoom)
     res.then(data => {
       if (data.status && data.status !== 200) {
         setErrorStack([data.message])
@@ -46,22 +100,7 @@ export default function RoomCreate() {
       router.replace("/[id]")
     })
   }
-
-  const handleNewTag = (evt: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-    evt.preventDefault()
-
-    setErrorStack(validation(formRoomName, formTag, formNumber, formDescription))
-    if (errorStack.length > 0) {
-      return
-    }
-
-    const newTag: Tag = {
-      id: "",
-      tag: formTag
-    }
-  }
-
-
+  
   return (
     <Layout requiredAuth={true}>
       <Form method="POST" title="Room 作成" errorStack={errorStack}>
@@ -72,26 +111,44 @@ export default function RoomCreate() {
           value={formRoomName}
           handleChange={(evt: ChangeEvent<HTMLInputElement>) => setFormRoomName(evt.target.value)}
         />
-        <FontAwesomeIcon icon={faTag} />
-        <InputText
-          type="text"
-          name="tag"
-          label="タグ"
-          value={formTag}
-          handleChange={(evt: ChangeEvent<HTMLInputElement>) => setFormTag(evt.target.value)}
-        />
-        
-        <SecondaryButton
-          type="button"
-          label="+"
-          onClick={handleSubmit}
-        />
 
-        <DangerButton
-          type="button"
-          label="+"
-          onClick={handleNewTag}
-        />
+        
+        
+        <form onSubmit={(e) => e.preventDefault()}>
+          <InputText
+            type="text"
+            name="tag"
+            label="タグ"
+            value={formTag}
+            handleChange={(evt: ChangeEvent<HTMLInputElement>) => setFormTag(evt.target.value)}
+          />
+        
+          <DangerButton
+            type="button"
+            label="+"
+            onClick={handleonSubmit}
+          />
+        </form>
+        <ul>
+          {tags.map((tag) => {
+            return (
+              <li key={tag.id}>
+                <FontAwesomeIcon icon={faTag} />
+                <input
+                  disabled={tag.removed}
+                  value={tag.value}
+                  onChange={(e) => handleOnEdit(tag.id, e.target.value)}
+                />
+                <DangerButton
+                  type="reset"
+                  label="-"
+                  disabled={tag.removed}
+                  onClick={() => handleOnRemove(tag.id,tag.removed)}
+                />
+              </li>
+            )
+          })}
+        </ul>
 
         <InputNumber
           type="number"
