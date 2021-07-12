@@ -6,21 +6,25 @@ import { PrimaryButton } from "../../components/button";
 import { DangerButton } from "../../components/button";
 import { SlideButton } from "../../components/button";
 import { InputText, InputTextarea } from "../../components/form/formField";
+import { InputTextTag, InputTextAddTag,ADButton } from "../../components/form/formTag";
+
 import Form from "../../components/form/form";
 import Layout from "../../components/layout/layout";
 import { RoomCreate, Room } from "../../services/room";
 import { InputNumber } from '../../components/form/formNumber';
 import { toUnicode } from 'punycode';
 
-import styles from './create.module.scss'
+import styles from "../../components/form/form.module.scss";
+//mport styles from "./create.module.scss"
 
 
 /*これはいらないかも formTag.tsx にかいた*/
 interface Tag{
   value: string,
   id: number,
-  removed: boolean
+  removed: boolean,
 }
+
 
 export default function RoomCreateFoom() {
   const router = useRouter()
@@ -43,7 +47,7 @@ export default function RoomCreateFoom() {
     const newTag: Tag = {
       value: formTag,
       id: new Date().getTime(),
-      removed: false
+      removed: false,
     }
 
     setTags([newTag, ...tags])
@@ -70,15 +74,18 @@ export default function RoomCreateFoom() {
       }
       return tag;
     });
-
     setTags(newTags);
   };
   /*tag end*/ 
 
+  const handleOnPublic = (evt: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    
+  };
+
   const handleSubmit = (evt: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     evt.preventDefault()
 
-    setErrorStack(validation(formRoomName, formTag, formNumber, formDescription))
+    setErrorStack(validation(formRoomName, formNumber, formDescription))
     if (errorStack.length > 0) {
       return
     }
@@ -86,7 +93,7 @@ export default function RoomCreateFoom() {
     const newRoom: Room = {
       id: "",
       roomname: formRoomName,
-      tag: formTag,
+      //tag:formTag,
       number: formNumber,
       description: formDescription
     }
@@ -101,6 +108,7 @@ export default function RoomCreateFoom() {
     })
   }
   
+  
   return (
     <Layout requiredAuth={true}>
       <Form method="POST" title="Room 作成" errorStack={errorStack}>
@@ -111,11 +119,9 @@ export default function RoomCreateFoom() {
           value={formRoomName}
           handleChange={(evt: ChangeEvent<HTMLInputElement>) => setFormRoomName(evt.target.value)}
         />
-
-        
         
         <form onSubmit={(e) => e.preventDefault()}>
-          <InputText
+          <InputTextTag
             type="text"
             name="tag"
             label="タグ"
@@ -129,23 +135,25 @@ export default function RoomCreateFoom() {
             onClick={handleonSubmit}
           />
         </form>
+
         <ul>
           {tags.map((tag) => {
             return (
-              <li key={tag.id}>
-                <FontAwesomeIcon icon={faTag} />
-                <input
+              <div key={tag.id} >
+                <InputTextAddTag
+                  type="text"
+                  name="addtag"
                   disabled={tag.removed}
                   value={tag.value}
                   onChange={(e) => handleOnEdit(tag.id, e.target.value)}
                 />
-                <DangerButton
-                  type="reset"
-                  label="-"
+                <ADButton
+                  type="button"
+                  label={tag.removed ? '+' : '-'}
                   disabled={tag.removed}
                   onClick={() => handleOnRemove(tag.id,tag.removed)}
                 />
-              </li>
+              </div>
             )
           })}
         </ul>
@@ -166,12 +174,24 @@ export default function RoomCreateFoom() {
           value={formDescription}
           handleChange={(evt: ChangeEvent<HTMLTextAreaElement>) => setFormDescription(evt.target.value)}
         />
+        
+        
+        <label className={styles.inputLabel}>public</label>
+        
+        <span className={styles.publicSlider}>
+          <SlideButton
+            name="public"
+            onClick={handleOnPublic}
+          />
+        </span>
 
-        <PrimaryButton
-          type="button"
-          label="ok"
-          onClick={handleSubmit}
-        />
+        <div className={styles.btnOK}>
+          <PrimaryButton
+            type="button"
+            label="ok"
+            onClick={handleSubmit}
+          />
+        </div>
 
       </Form>
     </Layout>
@@ -179,10 +199,10 @@ export default function RoomCreateFoom() {
 }
 
 
-function validation(roomname: string, tag: string, number: string, description: string): Array<string> {
+function validation(roomname: string, number: string, description: string): Array<string> {
   let errorStack: Array<string> = []
   if (!roomname) errorStack.push("Room名は必須です")
-  if (!tag) errorStack.push("tagは必須です")
+  //if (!tag) errorStack.push("tagは必須です")
   if (!number) errorStack.push("参加人数は必須です")
   if (!description) errorStack.push("説明は必須です")
 

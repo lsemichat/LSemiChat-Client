@@ -3,7 +3,7 @@ import { getRequest, postRequest } from './common'
 export interface Room {
   id: string,
   roomname: string,
-  tag: string,
+  //tag: string,
   number: string,
   description: string,
 }
@@ -29,7 +29,7 @@ export class RoomCreate {
   public async create(room: Room): Promise<any> {
     const newRoom = {
       roomname: room.roomname,
-      tag: room.tag,
+      //tag: room.tag,
       number: room.number,
       description: room.description
     }

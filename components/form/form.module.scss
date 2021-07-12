@@ -11,6 +11,9 @@
   min-height: 5rem;
   font-size: .9rem;
   width: 100%;
+  &:focus {
+    outline: none;
+  }
 }
 
 .inputText {
@@ -44,10 +47,56 @@
   padding-inline-start: 30px;
 }
 
+
+//Room 作成
 .inputNumber {
   border: 2px solid $sub-color;
   background-color: transparent;
   color: $main-color;
   border-radius: 5px;
-  width: 100%;
+  width: 30%;
+  &:focus {
+    outline: none;
+  }
+}
+
+.inputTextTag {
+  font-size: .9rem;
+  padding: 5px;
+  border: none;
+  border-bottom: 2px solid $sub-color;
+  background-color: transparent;
+  color: $main-color;
+  width: 50%;
+  &:focus {
+    outline: none;
+  }
+}
+
+.inputTextAddTag {
+  font-size: .9rem;
+  padding: 5px;
+  border: none;
+  border-bottom: 2px solid $sub-color;
+  background-color: transparent;
+  color: $main-color;
+  &:focus {
+    outline: none;
+  }
+}
+
+.iconfaTag{
+  color: $accent-color;
+}
+
+.iconfaTag:disabled{
+  color: $annotate-color;
+}
+
+.publicSlider{
+  padding-left: 10%;
+}
+
+.btnOK{
+  padding-top: 5%;
 }

@@ -114,6 +114,11 @@ body {
   &:hover {
     opacity: .7;
   }
+  &:disabled{
+    background-color: $annotate-color;
+    border-color: $annotate-color;
+    color: $base-color;
+  }
   &-primary {
     background-color: $accent-color;
     border-color: $accent-color;
